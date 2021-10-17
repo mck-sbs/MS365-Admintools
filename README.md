@@ -1,2 +1,2 @@
 # MS365-Admintools
-Some useful admin tool for MS-365
+Some useful admin tools for MS-365
