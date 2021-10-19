@@ -45,10 +45,6 @@ for($i=2;$i -le $rowcount;$i++){
     
         $upn |  Out-File -FilePath .\error.txt -Append
 
-        $ExcelObj.WorkBooks.Close()
-        $ExcelObj.Quit()
-        exit $LASTEXITCODE
-
     }
 
 }
