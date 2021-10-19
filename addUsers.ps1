@@ -22,20 +22,36 @@ for($i=2;$i -le $rowcount;$i++){
     $password = New-Object -TypeName Microsoft.Open.AzureAD.Model.PasswordProfile
     $password.Password = $pw
 
-    New-AzureADUser -UserPrincipalName $upn -MailNickName ($givenname + "." + $surname) -DisplayName ($surname + ", " + $givenname) -GivenName $givenname -Surname $surname -PasswordProfile $password -AccountEnabled $true -UsageLocation "DE"
+    Try{
 
-    $planName1 = "OFFICESUBSCRIPTION_STUDENT"
-    $planName2 = "STANDARDWOFFPACK_STUDENT"
+        New-AzureADUser -UserPrincipalName $upn -MailNickName ($givenname + "." + $surname) -DisplayName ($surname + ", " + $givenname) -GivenName $givenname -Surname $surname -PasswordProfile $password -AccountEnabled $true -UsageLocation "DE"
 
-    $License1 = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
-    $License1.SkuId = (Get-AzureADSubscribedSku | Where-Object -Property SkuPartNumber -Value $planName1 -EQ).SkuID
 
-    $License2 = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
-    $License2.SkuId = (Get-AzureADSubscribedSku | Where-Object -Property SkuPartNumber -Value $planName2 -EQ).SkuID
+        $planName1 = "OFFICESUBSCRIPTION_STUDENT"
+        $planName2 = "STANDARDWOFFPACK_STUDENT"
 
-    $LicensesToAssign = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
-    $LicensesToAssign.AddLicenses = $License1,$License2
+        $License1 = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
+        $License1.SkuId = (Get-AzureADSubscribedSku | Where-Object -Property SkuPartNumber -Value $planName1 -EQ).SkuID
 
-    Set-AzureADUserLicense -ObjectId $upn -AssignedLicenses $LicensesToAssign
+        $License2 = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicense
+        $License2.SkuId = (Get-AzureADSubscribedSku | Where-Object -Property SkuPartNumber -Value $planName2 -EQ).SkuID
+
+        $LicensesToAssign = New-Object -TypeName Microsoft.Open.AzureAD.Model.AssignedLicenses
+        $LicensesToAssign.AddLicenses = $License1,$License2
+
+        Set-AzureADUserLicense -ObjectId $upn -AssignedLicenses $LicensesToAssign
+    }
+    Catch{
+    
+        $upn |  Out-File -FilePath .\error.txt -Append
+
+        $ExcelObj.WorkBooks.Close()
+        $ExcelObj.Quit()
+        exit $LASTEXITCODE
+
+    }
 
 }
+
+$ExcelObj.WorkBooks.Close()
+$ExcelObj.Quit()
