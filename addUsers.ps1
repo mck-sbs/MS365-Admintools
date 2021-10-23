@@ -1,7 +1,4 @@
-Import-Module AzureAD
 
-$Credentials = Get-Credential
-Connect-AzureAD -Credential $Credentials
 
 $ExcelObj = New-Object -comobject Excel.Application
 $ExcelObj.visible=$true
@@ -44,8 +41,11 @@ for($i=2;$i -le $rowcount;$i++){
     Catch{
     
         $upn |  Out-File -FilePath .\error.txt -Append
+        "-addUsers upn: "+$upn |  Out-File -FilePath .\error.txt -Append
 
     }
+
+    
 
 }
 
